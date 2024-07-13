@@ -2,9 +2,10 @@ package com.produto.model;
 
 import java.util.List;
 
-import com.produto.dtos.ProdutoInputDTO;
+import com.produto.dtos.produto.ProdutoInputDTO;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -46,6 +47,9 @@ public class Produto {
     private Double valor;
 
     private Integer quantidade;
+
+    @Enumerated
+    private Avaliacao avaliacao;
 
     @ManyToMany
     private List<Categoria> categorias;
