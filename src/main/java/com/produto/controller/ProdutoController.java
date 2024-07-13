@@ -1,5 +1,7 @@
 package com.produto.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.produto.dtos.ProdutoInputDTO;
+import com.produto.dtos.pedido.PedidoProdutosInputDTO;
 import com.produto.dtos.produto.ProdutoAlterarDTO;
+import com.produto.dtos.produto.ProdutoInputDTO;
 import com.produto.service.ProdutoService;
 
 @RestController
@@ -43,17 +46,10 @@ public class ProdutoController {
         service.deletarProduto(id);
     }
 
+    @PostMapping("/selecionar")
+    public void postMethodName(@RequestBody List<PedidoProdutosInputDTO> pedidoProdutos) {
+        service.separarProdutos(pedidoProdutos);
+    }
     
-
-    @PatchMapping("aumentar/{id}/{quantidade}")
-    public void aumentaEstoque(@PathVariable Long id, @PathVariable Integer quantidade){
-        service.aumentaEstoque(id, quantidade);
-        
-    }
-
-    @PatchMapping("diminuir/{id}/{quantidade}")
-    public void diminuirEstoque(@PathVariable Long id, @PathVariable Integer quantidade){
-        service.diminuirEstoque(id, quantidade);
-    }
 
 }

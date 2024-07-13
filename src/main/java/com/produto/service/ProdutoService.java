@@ -1,13 +1,15 @@
 package com.produto.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.produto.dtos.ProdutoInputDTO;
+import com.produto.dtos.pedido.PedidoProdutosInputDTO;
 import com.produto.dtos.produto.ProdutoAlterarDTO;
+import com.produto.dtos.produto.ProdutoInputDTO;
 import com.produto.dtos.produto.ProdutoOutputDTO;
 import com.produto.model.Produto;
 import com.produto.repository.ProdutoRepository;
@@ -62,5 +64,18 @@ public class ProdutoService {
         var produto = repository.getReferenceById(id);
         produto.setQuantidade(produto.getQuantidade() - quantidade);
         repository.save(produto);
+    }
+
+    public void separarProdutos(List<PedidoProdutosInputDTO> pedidoProdutos) {
+        List<Produto> produtos = new ArrayList<>();
+        for (PedidoProdutosInputDTO pedido : pedidoProdutos) {
+            var produto = repository.findById(pedido.id());
+            if (produto.isPresent()) {
+                produtos.add(produto.get());
+                diminuirEstoque(produto.get().getId(), pedido.quantidade());
+            }
+        }
+        produtos.forEach(System.out::println);
+
     }
 }

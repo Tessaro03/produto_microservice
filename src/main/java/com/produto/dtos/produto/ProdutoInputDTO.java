@@ -1,4 +1,4 @@
-package com.produto.dtos;
+package com.produto.dtos.produto;
 
 import java.util.List;
 
