@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.produto.dtos.categoria.CategoriaOutputDTO;
 import com.produto.model.Categoria;
 import com.produto.repository.CategoriaRepository;
-import com.produto.repository.ProdutoRepository;
 
 @Service
 public class CategoriaService {
@@ -18,8 +17,6 @@ public class CategoriaService {
     @Autowired
     private CategoriaRepository repository;
 
-    @Autowired
-    private ProdutoRepository produtoRepository;
  
     public void criarCategoriaSeNaoExiste(String categoriaNome){
         if (!repository.existsByCategoria(categoriaNome)){
