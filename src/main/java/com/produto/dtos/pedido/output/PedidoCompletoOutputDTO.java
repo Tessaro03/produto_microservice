@@ -6,7 +6,7 @@ public record PedidoCompletoOutputDTO(
 
     Long idPedido,
 
-    List<ProdutoCompletoDTO> produto
+    List<ProdutoCompletoDTO> produtos
 
 ) {
     

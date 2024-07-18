@@ -9,7 +9,7 @@ public record PedidoIncompletoInputDTO(
 
     Long idPedido,
 
-    List<ProdutoIncompletoDTO> produtosPedido
+    List<ProdutoIncompletoDTO> produtos
 
 ) {
 }

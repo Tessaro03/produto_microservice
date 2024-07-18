@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,10 @@ public class ProdutoService {
 
     @Autowired
     private  CategoriaService categoriaService;
+
+    @Autowired 
+	private RabbitTemplate rabbitTemplate;
+	
 
     public void criarProduto(ProdutoInputDTO dto){
         var categorias = categoriaService.retornaListaDeCategoria(dto.categorias());
@@ -58,41 +63,48 @@ public class ProdutoService {
         repository.deleteById(id);
     }
 
-    public void aumentaEstoque(Long id, Integer quantidade) {
-        var produto = repository.getReferenceById(id);
+    public void aumentaEstoque(Produto produto, Integer quantidade) {
         produto.setQuantidade(produto.getQuantidade() + quantidade);
         repository.save(produto);
     }
 
-    public void diminuirEstoque(Long id, Integer quantidade) {
-        var produto = repository.getReferenceById(id);
+    public void diminuirEstoque(Produto produto, Integer quantidade) {
         produto.setQuantidade(produto.getQuantidade() - quantidade);
         repository.save(produto);
     }
 
+    
     /* Separa Produtos recebidos do Pedido buscando no banco de dados e diminuindo estoque */
     public void separarProdutos(PedidoIncompletoInputDTO pedido) {
         Map<Produto, ProdutoIncompletoDTO> produtos = new HashMap<>();
-        for (ProdutoIncompletoDTO produtoPedido : pedido.produtosPedido()) {
+        for (ProdutoIncompletoDTO produtoPedido : pedido.produtos()) {
             var produto = repository.findById(produtoPedido.id());
             if (produto.isPresent()) {
                 produtos.put(produto.get(), produtoPedido);
-                diminuirEstoque(produto.get().getId(), produtoPedido.quantidade());
+                diminuirEstoque(produto.get(), produtoPedido.quantidade());
             }
         }
         retornaListaDeProduto(pedido.idPedido(),produtos);
     }
-
-
+    
+    
     /* Retorna Lista de Produto para Pedido com os Produtos (+ Quantidade e Observação), id do Pedido */
-    public PedidoCompletoOutputDTO retornaListaDeProduto(Long idPedido,Map<Produto, ProdutoIncompletoDTO> produtos){
+    public void retornaListaDeProduto(Long idPedido,Map<Produto, ProdutoIncompletoDTO> produtos){
         var produtosLista = produtos.entrySet()
-                            .stream().map( p -> new ProdutoCompletoDTO(p.getKey(), p.getValue())).collect(Collectors.toList());
-
-        return new PedidoCompletoOutputDTO(idPedido, produtosLista);
-
+        .stream().map( p -> new ProdutoCompletoDTO(p.getKey(), p.getValue())).collect(Collectors.toList());
+        rabbitTemplate.convertAndSend("produto.separado",new PedidoCompletoOutputDTO(idPedido, produtosLista));    
         
     }
 
+    // Recebera lista de pedido para repor estoque do produto
+    public void reporProdutos(PedidoIncompletoInputDTO pedido) {
+        for (ProdutoIncompletoDTO produtoPedido : pedido.produtos()) {
+            var produto = repository.findById(produtoPedido.id());
+            if (produto.isPresent()) {
+                aumentaEstoque(produto.get(), produtoPedido.quantidade());
+            }
+        }
+     }
+ 
 }
 
