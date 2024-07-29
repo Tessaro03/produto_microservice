@@ -12,12 +12,13 @@ public record ProdutoOutputDTO(
     Integer quantidade,
     Double valor,
     String descricao,
+    Double nota,
     List<CategoriaOutputDTO> categoria
 ) {
     
     public ProdutoOutputDTO(Produto produto){
         this(produto.getId(),produto.getNomeProduto(),produto.getQuantidade(), 
-        produto.getValor(),produto.getDescricao(),
+        produto.getValor(),produto.getDescricao(), produto.getNota(),
          produto.getCategorias().stream().map(CategoriaOutputDTO::new).collect(Collectors.toList()));
     }
 

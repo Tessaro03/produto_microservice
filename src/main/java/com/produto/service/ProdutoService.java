@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.produto.dtos.avaliacao.NotaDTO;
 import com.produto.dtos.pedido.input.PedidoIncompletoInputDTO;
 import com.produto.dtos.pedido.input.ProdutoIncompletoDTO;
 import com.produto.dtos.pedido.output.PedidoCompletoOutputDTO;
@@ -105,6 +106,14 @@ public class ProdutoService {
             }
         }
      }
+
+    public void notaProduto(NotaDTO nota) {
+        var produto = repository.findById(nota.idProduto());
+        if (produto.isPresent()) {
+            produto.get().setNota(nota.nota());
+            repository.save(produto.get());
+        }
+    }
  
 }
 

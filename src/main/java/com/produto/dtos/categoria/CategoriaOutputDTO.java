@@ -3,7 +3,7 @@ package com.produto.dtos.categoria;
 import com.produto.model.Categoria;
 
 public record CategoriaOutputDTO(
-
+    
     Long id,
     String nome
 

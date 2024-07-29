@@ -4,6 +4,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.produto.dtos.avaliacao.NotaDTO;
 import com.produto.dtos.pedido.input.PedidoIncompletoInputDTO;
 import com.produto.service.ProdutoService;
 
@@ -23,6 +24,11 @@ public class ProdutoAMQPListener {
     @RabbitListener(queues="pedido.cancelado-produto")
     public void pedidoCancelado(PedidoIncompletoInputDTO pedido){
         service.reporProdutos(pedido);
+    }
+
+    @RabbitListener(queues="avaliacao.produto")
+    public void notaProduto(NotaDTO nota){
+        service.notaProduto(nota);
     }
 
 }
