@@ -73,7 +73,14 @@ public class ProdutoService {
         produto.setQuantidade(produto.getQuantidade() - quantidade);
         repository.save(produto);
     }
-
+    
+    /* Retorna Lista de Produto para Pedido com os Produtos (+ Quantidade e Observação), id do Pedido */
+    public void retornaListaDeProduto(Long idPedido,Map<Produto, ProdutoIncompletoDTO> produtos){
+        var produtosLista = produtos.entrySet()
+        .stream().map( p -> new ProdutoCompletoDTO(p.getKey(), p.getValue())).collect(Collectors.toList());
+        rabbitTemplate.convertAndSend("produto.separado",new PedidoCompletoOutputDTO(idPedido, produtosLista));    
+        
+    }
     
     /* Separa Produtos recebidos do Pedido buscando no banco de dados e diminuindo estoque */
     public void separarProdutos(PedidoIncompletoInputDTO pedido) {
@@ -88,15 +95,6 @@ public class ProdutoService {
         retornaListaDeProduto(pedido.idPedido(),produtos);
     }
     
-    
-    /* Retorna Lista de Produto para Pedido com os Produtos (+ Quantidade e Observação), id do Pedido */
-    public void retornaListaDeProduto(Long idPedido,Map<Produto, ProdutoIncompletoDTO> produtos){
-        var produtosLista = produtos.entrySet()
-        .stream().map( p -> new ProdutoCompletoDTO(p.getKey(), p.getValue())).collect(Collectors.toList());
-        rabbitTemplate.convertAndSend("produto.separado",new PedidoCompletoOutputDTO(idPedido, produtosLista));    
-        
-    }
-
     // Recebera lista de pedido para repor estoque do produto
     public void reporProdutos(PedidoIncompletoInputDTO pedido) {
         for (ProdutoIncompletoDTO produtoPedido : pedido.produtos()) {

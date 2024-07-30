@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class Categoria {
     
     public Categoria(String nome) {
-        this.nome = nome.toUpperCase();
+        this.nome = nome.toUpperCase().strip();
     }
 
     @Id
