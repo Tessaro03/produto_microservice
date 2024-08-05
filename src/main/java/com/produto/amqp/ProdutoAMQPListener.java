@@ -8,6 +8,8 @@ import com.produto.dtos.avaliacao.NotaDTO;
 import com.produto.dtos.pedido.input.PedidoIncompletoInputDTO;
 import com.produto.service.ProdutoService;
 
+import jakarta.validation.Valid;
+
 @Service
 public class ProdutoAMQPListener {
 
@@ -16,18 +18,18 @@ public class ProdutoAMQPListener {
 
 
     @RabbitListener(queues="pedido.solicitado")
-    public void separarPedido(PedidoIncompletoInputDTO pedido){
+    public void separarPedido(@Valid PedidoIncompletoInputDTO pedido){
         service.separarProdutos(pedido);
     }
 
     
     @RabbitListener(queues="pedido.cancelado-produto")
-    public void pedidoCancelado(PedidoIncompletoInputDTO pedido){
+    public void pedidoCancelado(@Valid PedidoIncompletoInputDTO pedido){
         service.reporProdutos(pedido);
     }
 
     @RabbitListener(queues="avaliacao.produto")
-    public void notaProduto(NotaDTO nota){
+    public void notaProduto(@Valid NotaDTO nota){
         service.notaProduto(nota);
     }
 
