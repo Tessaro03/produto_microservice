@@ -19,6 +19,7 @@ import com.produto.dtos.produto.ProdutoInputDTO;
 import com.produto.dtos.produto.ProdutoOutputDTO;
 import com.produto.model.Produto;
 import com.produto.repository.ProdutoRepository;
+import com.produto.validation.ProdutoValidation;
 
 @Service
 public class ProdutoService {
@@ -31,6 +32,9 @@ public class ProdutoService {
 
     @Autowired 
 	private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private ProdutoValidation validador;
 	
 
     public void criarProduto(ProdutoInputDTO dto){
@@ -84,6 +88,7 @@ public class ProdutoService {
     
     /* Separa Produtos recebidos do Pedido buscando no banco de dados e diminuindo estoque */
     public void separarProdutos(PedidoIncompletoInputDTO pedido) {
+        validador.validarSeparar(pedido);
         Map<Produto, ProdutoIncompletoDTO> produtos = new HashMap<>();
         for (ProdutoIncompletoDTO produtoPedido : pedido.produtos()) {
             var produto = repository.findById(produtoPedido.id());
