@@ -48,6 +48,7 @@ public class ProdutoService {
     }
 
     public void alterarProduto(ProdutoAlterarDTO dto, Long id) {
+        validador.validarAlterar(dto, id);
         var produto = repository.getReferenceById(id);
         if (dto.nomeProduto() != null) 
             produto.setNomeProduto(dto.nomeProduto());

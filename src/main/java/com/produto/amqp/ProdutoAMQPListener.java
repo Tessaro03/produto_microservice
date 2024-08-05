@@ -16,13 +16,11 @@ public class ProdutoAMQPListener {
     @Autowired
     private ProdutoService service; 
 
-
     @RabbitListener(queues="pedido.solicitado")
     public void separarPedido(@Valid PedidoIncompletoInputDTO pedido){
         service.separarProdutos(pedido);
     }
 
-    
     @RabbitListener(queues="pedido.cancelado-produto")
     public void pedidoCancelado(@Valid PedidoIncompletoInputDTO pedido){
         service.reporProdutos(pedido);

@@ -30,9 +30,6 @@ public class ProdutoAMQPConfiguration {
         return QueueBuilder.nonDurable("avaliacao.produto").build(); 
     }
     
-    
-    
-
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, Jackson2JsonMessageConverter messageConverter){
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
