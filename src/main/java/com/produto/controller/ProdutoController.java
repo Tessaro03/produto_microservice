@@ -16,6 +16,8 @@ import com.produto.dtos.produto.ProdutoAlterarDTO;
 import com.produto.dtos.produto.ProdutoInputDTO;
 import com.produto.service.ProdutoService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/produtos")
 public class ProdutoController {
@@ -35,7 +37,7 @@ public class ProdutoController {
     }
 
     @PatchMapping("/{id}")
-    public void  alterarProduto(@PathVariable Long id,@RequestBody ProdutoAlterarDTO dto){
+    public void  alterarProduto(@PathVariable Long id,@RequestBody @Valid ProdutoAlterarDTO dto){
         service.alterarProduto(dto, id);
     }
 

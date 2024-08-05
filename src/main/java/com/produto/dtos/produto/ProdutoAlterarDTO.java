@@ -2,6 +2,8 @@ package com.produto.dtos.produto;
 
 import java.util.List;
 
+import jakarta.validation.constraints.Min;
+
 
 public record ProdutoAlterarDTO(
 
@@ -11,8 +13,10 @@ public record ProdutoAlterarDTO(
         
     List<String> categorias,
     
+    @Min(0)
     Double valor,
 
+    @Min(0)
     Integer quantidade
 
 
