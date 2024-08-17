@@ -22,6 +22,10 @@ public class ValidarSeProdutoExiste implements ValidadorId{
         }
     }
 
+    @Override
+    public void validar(Long idProduto, Long idLoja) {
+    }
+
     
 
 }

@@ -57,9 +57,11 @@ public class ProdutoService {
         return produtos.stream().map(ProdutoOutputDTO::new).collect(Collectors.toList());
     }
 
-    public void alterarProduto(ProdutoAlterarDTO dto, Long id) {
-        validador.validarAlterar(dto, id);
-        var produto = repository.getReferenceById(id);
+    public void alterarProduto(ProdutoAlterarDTO dto, Long idProduto, HttpServletRequest request) {
+        var loja = tokenService.extrairInformacoes(request);
+
+        validador.validarAlterar(dto, idProduto, loja.id());
+        var produto = repository.getReferenceById(idProduto);
         if (dto.nomeProduto() != null) 
             produto.setNomeProduto(dto.nomeProduto());
         if (dto.descricao() != null)
@@ -75,8 +77,11 @@ public class ProdutoService {
         repository.save(produto);
     }
 
-    public void deletarProduto(Long id) {
-        repository.deleteById(id);
+    public void deletarProduto(Long idProduto, HttpServletRequest request) {
+        var loja = tokenService.extrairInformacoes(request);
+        validador.validarDeletar( idProduto, loja.id());
+
+        repository.deleteById(idProduto);
     }
 
     public void aumentaEstoque(Produto produto, Integer quantidade) {

@@ -29,8 +29,13 @@ public class ProdutoValidation {
         }
     }
 
-    public void validarAlterar(ProdutoAlterarDTO dto, Long id){
-        validadorId.forEach(v -> v.validar(id));
+    public void validarAlterar(ProdutoAlterarDTO dto, Long idProduto, Long idLoja){
+        validadorId.forEach(v -> v.validar(idProduto, idLoja));
+
+    }
+
+    public void validarDeletar(Long idProduto, Long idLoja){
+        validadorId.forEach(v -> v.validar(idProduto, idLoja));
 
     }
 

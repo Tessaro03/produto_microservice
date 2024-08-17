@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.produto.dtos.pedido.input.PedidoIncompletoInputDTO;
 import com.produto.dtos.produto.ProdutoAlterarDTO;
 import com.produto.dtos.produto.ProdutoInputDTO;
 import com.produto.service.ProdutoService;
@@ -38,19 +37,15 @@ public class ProdutoController {
     }
 
     @PatchMapping("/{id}")
-    public void  alterarProduto(@PathVariable Long id,@RequestBody @Valid ProdutoAlterarDTO dto){
-        service.alterarProduto(dto, id);
+    public void  alterarProduto(@PathVariable Long id,@RequestBody @Valid ProdutoAlterarDTO dto, HttpServletRequest request){
+        service.alterarProduto(dto, id, request);
     }
 
     @DeleteMapping("/{id}")
-    public void deletarProduto(@PathVariable Long id){
-        service.deletarProduto(id);
+    public void deletarProduto(@PathVariable Long id, HttpServletRequest request){
+        service.deletarProduto(id, request);
     }
 
-    @PostMapping("/separar")
-    public void separarProdutos(@RequestBody PedidoIncompletoInputDTO pedido) {
-        service.separarProdutos(pedido);
-    }
     
 
 }
