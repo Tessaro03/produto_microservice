@@ -31,7 +31,7 @@ public class CategoriaController {
         service.criarCategoriaSeNaoExiste(dto.nome());
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public void deletarCategoria(@PathVariable Long id){
         service.deletarCategoria(id);
     }
