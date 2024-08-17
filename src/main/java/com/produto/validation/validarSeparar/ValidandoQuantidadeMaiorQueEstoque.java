@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.produto.dtos.pedido.input.ProdutoIncompletoDTO;
-import com.produto.infra.validation.ValidacaoExcepetion;
+import com.produto.infra.validation.ValidacaoException;
 import com.produto.repository.ProdutoRepository;
 
 import jakarta.transaction.Transactional;
@@ -21,7 +21,7 @@ public class ValidandoQuantidadeMaiorQueEstoque implements ValidadorSeparacao{
         
         var produto = repository.getReferenceById(dto.id());
         if (produto.getQuantidade() < dto.quantidade()) {
-            throw new ValidacaoExcepetion("Quantidade indisponivel " + produto.getNomeProduto() );
+            throw new ValidacaoException("Quantidade indisponivel " + produto.getNomeProduto() );
         }
     }
     

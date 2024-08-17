@@ -22,8 +22,8 @@ public class TratamentoDeErro {
         return ResponseEntity.badRequest().body(erros.stream().map(DadosErroValidacao::new).toList());
     }
 
-    @ExceptionHandler(ValidacaoExcepetion.class)
-    public ResponseEntity tratarErroRegraDeNegocio(ValidacaoExcepetion ex){
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity tratarErroRegraDeNegocio(ValidacaoException ex){
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
