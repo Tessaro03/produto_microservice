@@ -29,6 +29,12 @@ public class ProdutoAMQPConfiguration {
     public Queue criaFilaNotaProduto(){ 
         return QueueBuilder.nonDurable("avaliacao.produto").build(); 
     }
+
+    @Bean
+    public Queue criaFilaPedidoSolicitado(){ 
+        return QueueBuilder.nonDurable("pedido.solicitado").build(); 
+    }
+    
     
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, Jackson2JsonMessageConverter messageConverter){
