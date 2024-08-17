@@ -1,5 +1,7 @@
 package com.produto.service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +19,12 @@ import com.produto.dtos.pedido.output.ProdutoCompletoDTO;
 import com.produto.dtos.produto.ProdutoAlterarDTO;
 import com.produto.dtos.produto.ProdutoInputDTO;
 import com.produto.dtos.produto.ProdutoOutputDTO;
+import com.produto.infra.security.TokenService;
 import com.produto.model.Produto;
 import com.produto.repository.ProdutoRepository;
 import com.produto.validation.ProdutoValidation;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class ProdutoService {
@@ -35,11 +40,16 @@ public class ProdutoService {
 
     @Autowired
     private ProdutoValidation validador;
+
+    @Autowired
+    private TokenService tokenService;
 	
 
-    public void criarProduto(ProdutoInputDTO dto){
+    public void criarProduto(ProdutoInputDTO dto, HttpServletRequest request){
+        var loja = tokenService.extrairInformacoes(request);
+
         var categorias = categoriaService.retornaListaDeCategoria(dto.categorias());
-        repository.save(new Produto(dto, categorias));
+        repository.save(new Produto(dto, categorias, loja.id()));
     }
 
     public List<ProdutoOutputDTO> listaProdutos(){
@@ -79,12 +89,28 @@ public class ProdutoService {
         repository.save(produto);
     }
     
-    /* Retorna Lista de Produto para Pedido com os Produtos (+ Quantidade e Observação), id do Pedido */
-    public void retornaListaDeProduto(Long idPedido,Map<Produto, ProdutoIncompletoDTO> produtos){
-        var produtosLista = produtos.entrySet()
-        .stream().map( p -> new ProdutoCompletoDTO(p.getKey(), p.getValue())).collect(Collectors.toList());
-        rabbitTemplate.convertAndSend("produto.separado",new PedidoCompletoOutputDTO(idPedido, produtosLista));    
-        
+    /* Retorna Listas de Produtos para Pedido com os Produtos separados por loja (+ Quantidade e Observação), id do Cliente */
+    public void retornaListaDeProduto(Long idCliente,Map<Produto, ProdutoIncompletoDTO> produtos){
+        Long idAtual = null;
+        List<ProdutoCompletoDTO> produtosSeparados = new ArrayList<>();
+        List<ProdutoCompletoDTO> produtosLista = produtos.entrySet().stream().map( p -> new ProdutoCompletoDTO(p.getKey(), p.getValue())).collect(Collectors.toList());
+        produtosLista.sort(Comparator.comparing(ProdutoCompletoDTO::idLoja));
+        for (int i = 0; i < produtosLista.size(); i++) {
+            var produto = produtosLista.get(i);
+
+            if ( i == 0 || produto.idLoja().equals(idAtual)){
+                produtosSeparados.add(produto);
+            }  else {
+                rabbitTemplate.convertAndSend("produto.separado", new PedidoCompletoOutputDTO(idCliente, produtosSeparados));
+                produtosSeparados.clear();
+                produtosSeparados.add(produto);
+            }
+            idAtual = produto.idLoja();
+
+            if ( i == produtosLista.size() - 1) {
+                rabbitTemplate.convertAndSend("produto.separado", new PedidoCompletoOutputDTO(idCliente, produtosSeparados));
+            }
+        }
     }
     
     /* Separa Produtos recebidos do Pedido buscando no banco de dados e diminuindo estoque */
@@ -98,7 +124,8 @@ public class ProdutoService {
                 diminuirEstoque(produto.get(), produtoPedido.quantidade());
             }
         }
-        retornaListaDeProduto(pedido.idPedido(),produtos);
+        
+        retornaListaDeProduto(pedido.idCliente(),produtos);
     }
     
     // Recebera lista de pedido para repor estoque do produto

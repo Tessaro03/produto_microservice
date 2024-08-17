@@ -16,6 +16,7 @@ import com.produto.dtos.produto.ProdutoAlterarDTO;
 import com.produto.dtos.produto.ProdutoInputDTO;
 import com.produto.service.ProdutoService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -32,8 +33,8 @@ public class ProdutoController {
     }
     
     @PostMapping
-    public void criarProduto(@RequestBody ProdutoInputDTO dto){
-        service.criarProduto(dto);
+    public void criarProduto(@RequestBody ProdutoInputDTO dto, HttpServletRequest request){
+        service.criarProduto(dto, request);
     }
 
     @PatchMapping("/{id}")

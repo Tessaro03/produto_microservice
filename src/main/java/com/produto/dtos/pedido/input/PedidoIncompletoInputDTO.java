@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 public record PedidoIncompletoInputDTO(
 
     @NotNull
-    Long idPedido,
+    Long idCliente,
 
     @NotEmpty
     List<ProdutoIncompletoDTO> produtos

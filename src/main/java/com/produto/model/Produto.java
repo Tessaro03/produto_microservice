@@ -43,9 +43,9 @@ public class Produto {
     @ManyToMany
     private List<Categoria> categorias;
     
-    public Produto(ProdutoInputDTO dto, List<Categoria> categorias){
+    public Produto(ProdutoInputDTO dto, List<Categoria> categorias, Long idLoja){
     
-        this.idLoja = 1l;
+        this.idLoja = idLoja;
         this.nomeProduto = dto.nomeProduto();
         this.descricao = dto.descricao();
         this.valor = dto.valor();
