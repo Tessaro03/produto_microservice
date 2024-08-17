@@ -1,8 +1,12 @@
 package com.produto.infra.security;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,13 +24,18 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
     throws ServletException, IOException {
-        var tokenJwt = tokenService.recuperarToken(request);
-        if (tokenJwt != null) {
-            tokenService.decodificadorToken(tokenJwt);
-            filterChain.doFilter(request, response); 
+        String token = tokenService.recuperarToken(request);
+        if (token != null) {
+
+            GrantedAuthority authority = tokenService.getAuthorities(token);
+            System.out.println(authority);
+            // Cria o objeto de autenticação e configura o contexto de segurança
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(null, null, List.of(authority));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
+        
+        filterChain.doFilter(request, response);
     }
-
-   
 }
+   
+

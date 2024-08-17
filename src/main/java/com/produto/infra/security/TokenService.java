@@ -1,6 +1,12 @@
 package com.produto.infra.security;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
@@ -33,6 +39,7 @@ public class TokenService {
         }
     }
 
+
      public String recuperarToken(HttpServletRequest request) {
         var authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null) {
@@ -51,5 +58,13 @@ public class TokenService {
         String username = decodedJWT.getSubject();
         UsuarioDTO usuarioDTO = new UsuarioDTO(id, username, email, tipo);
         return usuarioDTO;
+    }
+
+
+    public GrantedAuthority getAuthorities(String tokenJWT) {
+        DecodedJWT decodedJWT = decodificadorToken(tokenJWT);
+        String role = decodedJWT.getClaim("roles").asString();
+        SimpleGrantedAuthority authority = new  SimpleGrantedAuthority(role);
+        return authority;
     }
 }
