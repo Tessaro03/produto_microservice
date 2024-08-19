@@ -26,9 +26,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     throws ServletException, IOException {
         String token = tokenService.recuperarToken(request);
         if (token != null) {
-
             GrantedAuthority authority = tokenService.getAuthorities(token);
-            System.out.println(authority);
             // Cria o objeto de autenticação e configura o contexto de segurança
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(null, null, List.of(authority));
             SecurityContextHolder.getContext().setAuthentication(authentication);

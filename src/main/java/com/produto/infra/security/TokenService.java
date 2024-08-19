@@ -1,9 +1,5 @@
 package com.produto.infra.security;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,8 +12,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.produto.infra.validation.ValidacaoException;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-
 
 @Service
 public class TokenService {
